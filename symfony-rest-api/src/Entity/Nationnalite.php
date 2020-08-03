@@ -2,14 +2,22 @@
 
 namespace App\Entity;
 
-use App\Repository\NationnaliteRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\NationnaliteRepository;
+use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=NationnaliteRepository::class)
+ * @ApiResource(
+ *          attributes={
+ *              "order"= {
+ *                  "libelle" : "ASC"
+ *              }
+ *          }
+ * )
  */
 class Nationnalite
 {
@@ -17,13 +25,11 @@ class Nationnalite
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"listAuteurFull"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"listAuteurFull", "listAuteurSimple"})
      */
     private $libelle;
 
