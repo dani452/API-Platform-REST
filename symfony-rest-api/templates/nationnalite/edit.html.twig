@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Nationnalite{% endblock %}
+
+{% block body %}
+    <h1>Edit Nationnalite</h1>
+
+    {{ include('nationnalite/_form.html.twig', {'button_label': 'Update'}) }}
+
+    <a href="{{ path('nationnalite_index') }}">back to list</a>
+
+    {{ include('nationnalite/_delete_form.html.twig') }}
+{% endblock %}
