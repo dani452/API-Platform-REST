@@ -2,14 +2,62 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\LivreRepository;
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Symfony\Component\Serializer\Annotation\Groups;
+use ApiPlatform\Core\Serializer\Filter\PropertyFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\OrderFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\RangeFilter;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
 
 /**
  * @ORM\Entity(repositoryClass=LivreRepository::class)
- * @ApiResource()
+ * @ApiResource(
+ *          attributes={
+ *              "order"= {
+ *                  "titre" : "ASC",
+ *                  "prix" : "DESC"
+ *              },
+ *              "pagination_items_per_page"=30
+ *          }
+ * )
+ * @ApiFilter(
+ *          SearchFilter::class,
+ *          properties={
+ *              "titre": "ipartial",
+ *              "auteur": "exact"
+ *          }
+ * )
+ * @ApiFilter(
+ *          RangeFilter::class,
+ *          properties={
+ *              "prix"
+ *          }
+ * )
+ * @ApiFilter(
+ *          OrderFilter::class,
+ *          properties={
+ *              "titre"="ASC",
+ *              "prix",
+*               "auteur.nom"="desc"
+ *          }
+ * )
+ * @ApiFilter(
+ *          PropertyFilter::class,
+ *          arguments={
+ *              "parameterName"="properties",
+ *              "overrideDefaultProperties": false,
+**              "whitelist"= {
+ *                       "isbn",
+ *                       "titre",
+ *                       "prix"
+ *              }
+ *          }
+ * )
  */
 class Livre
 {
@@ -62,6 +110,16 @@ class Livre
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $langue;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Pret::class, mappedBy="livre")
+     */
+    private $prets;
+
+    public function __construct()
+    {
+        $this->prets = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -160,6 +218,37 @@ class Livre
     public function setLangue(?string $langue): self
     {
         $this->langue = $langue;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Pret[]
+     */
+    public function getPrets(): Collection
+    {
+        return $this->prets;
+    }
+
+    public function addPret(Pret $pret): self
+    {
+        if (!$this->prets->contains($pret)) {
+            $this->prets[] = $pret;
+            $pret->setLivre($this);
+        }
+
+        return $this;
+    }
+
+    public function removePret(Pret $pret): self
+    {
+        if ($this->prets->contains($pret)) {
+            $this->prets->removeElement($pret);
+            // set the owning side to null (unless already changed)
+            if ($pret->getLivre() === $this) {
+                $pret->setLivre(null);
+            }
+        }
 
         return $this;
     }
