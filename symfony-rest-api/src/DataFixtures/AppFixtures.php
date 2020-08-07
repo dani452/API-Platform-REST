@@ -48,31 +48,37 @@ class AppFixtures extends Fixture
             "78089", "78090", "78092", "78096", "78104", "78107", "78108", "78113", "78117", "78118"
         ];
  
+        $rolesAdherent[] = ADHERENT::ROLE_ADHERENT;
         for ($i = 0; $i < 25; $i++) {
-            $adherent = new Adherent();
-            $adherent->setNom($this->faker->lastName())
+                 $adherent = new Adherent();
+                 $adherent->setNom($this->faker->lastName())
                 ->setPrenom($this->faker->firstName($genre[mt_rand(0, 1)]))
                 ->setAdresse($this->faker->streetAddress())
                 ->setTel($this->faker->phoneNumber())
                 ->setCodeCommune($commune[mt_rand(0, sizeof($commune) - 1)])
                 ->setMail(strtolower($adherent->getNom()) . "@gmail.com")
-                ->setPassword($this->passwordEncoder->encodePassword($adherent, $adherent->getNom()));
+                ->setPassword($this->passwordEncoder->encodePassword($adherent, $adherent->getNom()))
+                ->setRoles($rolesAdherent);
             $this->addReference("adherent" . $i, $adherent);
             $this->manager->persist($adherent);
         }
  
         $adherentAdmin = new Adherent();
+        $rolesAdmin[] = ADHERENT::ROLE_ADMIN;
         $adherentAdmin->setNom("Da Silva")
             ->setPrenom("Daniel")
             ->setMail("admin@gmail.com")
-            ->setPassword($this->passwordEncoder->encodePassword($adherentAdmin, $adherentAdmin->getNom()));
+            ->setPassword($this->passwordEncoder->encodePassword($adherentAdmin, $adherentAdmin->getNom()))
+            ->setRoles($rolesAdmin);
         $this->manager->persist($adherentAdmin);
  
         $adherentManager = new Adherent();
+        $rolesManager[] = ADHERENT::ROLE_MANAGER;
         $adherentManager->setNom("De Sousa")
-            ->setPrenom("Victoria")
+            ->setPrenom("Catarina")
             ->setMail("manager@gmail.com")
-            ->setPassword($this->passwordEncoder->encodePassword($adherentManager, $adherentManager->getNom()));
+            ->setPassword($this->passwordEncoder->encodePassword($adherentManager, $adherentManager->getNom()))
+            ->setRoles($rolesManager);
         $this->manager->persist($adherentManager);
  
         $this->manager->flush();
@@ -92,8 +98,8 @@ class AppFixtures extends Fixture
                 $pret = new Pret();
                 $livre = $this->repoLivre->find(mt_rand(1, 49));
                 $pret->setLivre($livre)
-                    ->setAdherent($this->getReference("adherent" . $i))
-                    ->setDatePret($this->faker->dateTimeBetween('-6 months'));
+                     ->setAdherent($this->getReference("adherent" . $i))
+                     ->setDatePret($this->faker->dateTimeBetween('-6 months'));
                 $dateRetourPrevue = date('Y-m-d H:m:n', strtotime('15 days', $pret->getDatePret()->getTimestamp()));
                 $dateRetourPrevue = \DateTime::createFromFormat('Y-m-d H:m:n', $dateRetourPrevue);
                 $pret->setDateRetourPrevue($dateRetourPrevue);

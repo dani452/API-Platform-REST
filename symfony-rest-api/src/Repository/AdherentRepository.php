@@ -1,11 +1,12 @@
 <?php
-
+ 
 namespace App\Repository;
-
+ 
 use App\Entity\Adherent;
-use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-
+use Symfony\Bridge\Doctrine\RegistryInterface;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+ 
 /**
  * @method Adherent|null find($id, $lockMode = null, $lockVersion = null)
  * @method Adherent|null findOneBy(array $criteria, array $orderBy = null)
@@ -18,33 +19,18 @@ class AdherentRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Adherent::class);
     }
-
-    // /**
-    //  * @return Adherent[] Returns an array of Adherent objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+ * Undocumented function
+ *
+ * @return void
+ */
+    public function nbPretsPardherent()
     {
-        return $this->createQueryBuilder('a')
-            ->andWhere('a.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('a.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
+        $query = $this->createQueryBuilder('a')
+            ->select('a.id,a.nom,a.prenom, count(p.id) as nbPrets')
+            ->join('a.prets', 'p')
+            ->groupBy('a')
+            ->orderBy('nbPrets', 'DESC');
+        return $query->getQuery()->getResult();
     }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Adherent
-    {
-        return $this->createQueryBuilder('a')
-            ->andWhere('a.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }
