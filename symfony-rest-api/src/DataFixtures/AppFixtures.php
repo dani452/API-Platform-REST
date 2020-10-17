@@ -27,7 +27,7 @@ class AppFixtures extends Fixture
         $this->manager = $manager;
         $this->repoLivre = $this->manager->getRepository(Livre::class);
         $this->loadAdherent();
-        $this->loadPret();
+      /*  $this->loadPret();*/
  
         $manager->flush();
     }
@@ -89,7 +89,7 @@ class AppFixtures extends Fixture
      *
      * @return void
      */
-    public function loadPret()
+  /*  public function loadPret()
     {
  
         for ($i = 0; $i < 25; $i++) { // pour chaque adhérent
@@ -111,5 +111,5 @@ class AppFixtures extends Fixture
             }
         }
         $this->manager->flush();
-    }
+    }*/
 }
